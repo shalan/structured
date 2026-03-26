@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# macOS
+.DS_Store
+
+# Synthesis intermediates
+*.log
+*.blif
+techmap_whitelist.v
+
+# Generated outputs (regenerable)
+designs/synth/
+output/
+tmp/
+fabric/fabric_cells.yaml
+
+# Claude Code
+.claude/

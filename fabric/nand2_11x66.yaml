@@ -1,0 +1,175 @@
+# ==============================================================================
+# Fabric Definition for Sky130 Structured ASIC - Tile v2
+# Version: 16.2 (Balanced Cells, Correct Tie Placement)
+#
+# Geometry: 66 sites wide, 11 rows high (~30.36um x 29.92um)
+# Tapping: Strict Tap-at-0 and Tap-at-33 for all rows.
+# Tie:     conb_1 immediately after tap at site 33 on all rows (sites 34-36).
+# ==============================================================================
+fabric_info:
+  technology: "sky130"
+  site_dimensions_um: { width: 0.46, height: 2.72 }
+  units: 1000
+fabric_layout:
+  tiles_x: 32
+  tiles_y: 32
+cell_definitions:
+  sky130_fd_sc_hd__nand2_2:       { width_sites: 5 }
+  sky130_fd_sc_hd__and2_1:        { width_sites: 5 }
+  sky130_fd_sc_hd__clkbuf_4:      { width_sites: 6 }
+  sky130_fd_sc_hd__dfbbp_1:       { width_sites: 26 }
+  sky130_fd_sc_hd__conb_1:        { width_sites: 3 }
+  sky130_fd_sc_hd__tapvpwrvgnd_1: { width_sites: 1 }
+  sky130_fd_sc_hd__decap_3:       { width_sites: 3 }
+  sky130_fd_sc_hd__decap_4:       { width_sites: 4 }
+  sky130_fd_sc_hd__inv_2:         { width_sites: 3 }
+  sky130_fd_sc_hd__buf_2:         { width_sites: 4 }
+tile_definition:
+  dimensions_sites: { width: 66, height: 11 }
+  cells:
+    # =========================================================================
+    # ROW 0 (N) - CLKBUF + NAND2 left, dfbbp right
+    # Left:  T(0) C3(1-3) CLKBUF(4-9) NAND2x4(10-29) inv2(30-32)        = 33
+    # Right: T(33) conb(34-36) dfbbp(37-62) inv2(63-65)                   = 33
+    # =========================================================================
+    - { template_name: "R0_T0",   cell_type: "sky130_fd_sc_hd__tapvpwrvgnd_1", origin_sites: { x: 0,  y: 0 } }
+    - { template_name: "R0_C3",   cell_type: "sky130_fd_sc_hd__decap_3",       origin_sites: { x: 1,  y: 0 } }
+    - { template_name: "R0_CB",   cell_type: "sky130_fd_sc_hd__clkbuf_4",      origin_sites: { x: 4,  y: 0 } }
+    - { template_name: "R0_N2L",  cell_type: "sky130_fd_sc_hd__nand2_2",       origin_sites: { x: 10, y: 0 }, repeat: 4, spacing: 5 }
+    - { template_name: "R0_I2L",  cell_type: "sky130_fd_sc_hd__inv_2",         origin_sites: { x: 30, y: 0 } }
+    - { template_name: "R0_T1",   cell_type: "sky130_fd_sc_hd__tapvpwrvgnd_1", origin_sites: { x: 33, y: 0 } }
+    - { template_name: "R0_CB1R", cell_type: "sky130_fd_sc_hd__conb_1",        origin_sites: { x: 34, y: 0 } }
+    - { template_name: "R0_DFR",  cell_type: "sky130_fd_sc_hd__dfbbp_1",       origin_sites: { x: 37, y: 0 } }
+    - { template_name: "R0_I2R",  cell_type: "sky130_fd_sc_hd__inv_2",         origin_sites: { x: 63, y: 0 } }
+    # =========================================================================
+    # ROW 1 (MX) - dfbbp left, 3xinv2 + 4xNAND2 right
+    # Left:  T(0) C3(1-3) inv2(4-6) dfbbp(7-32)                          = 33
+    # Right: T(33) conb(34-36) inv2x3(37-45) NAND2x4(46-65)              = 33
+    # =========================================================================
+    - { template_name: "R1_T0",   cell_type: "sky130_fd_sc_hd__tapvpwrvgnd_1", origin_sites: { x: 0,  y: 1 } }
+    - { template_name: "R1_C3",   cell_type: "sky130_fd_sc_hd__decap_3",       origin_sites: { x: 1,  y: 1 } }
+    - { template_name: "R1_I2L",  cell_type: "sky130_fd_sc_hd__inv_2",         origin_sites: { x: 4,  y: 1 } }
+    - { template_name: "R1_DFL",  cell_type: "sky130_fd_sc_hd__dfbbp_1",       origin_sites: { x: 7,  y: 1 } }
+    - { template_name: "R1_T1",   cell_type: "sky130_fd_sc_hd__tapvpwrvgnd_1", origin_sites: { x: 33, y: 1 } }
+    - { template_name: "R1_CB1R", cell_type: "sky130_fd_sc_hd__conb_1",        origin_sites: { x: 34, y: 1 } }
+    - { template_name: "R1_I2R",  cell_type: "sky130_fd_sc_hd__inv_2",         origin_sites: { x: 37, y: 1 }, repeat: 3, spacing: 3 }
+    - { template_name: "R1_N2R",  cell_type: "sky130_fd_sc_hd__nand2_2",       origin_sites: { x: 46, y: 1 }, repeat: 4, spacing: 5 }
+    # =========================================================================
+    # ROW 2 (N) - NAND2 left, BUF + NAND2 right
+    # Left:  T(0) C4(1-4) NAND2x5(5-29) inv2(30-32)                     = 33
+    # Right: T(33) conb(34-36) BUF2(37-40) NAND2x5(41-65)               = 33
+    # =========================================================================
+    - { template_name: "R2_T0",   cell_type: "sky130_fd_sc_hd__tapvpwrvgnd_1", origin_sites: { x: 0,  y: 2 } }
+    - { template_name: "R2_C4",   cell_type: "sky130_fd_sc_hd__decap_4",       origin_sites: { x: 1,  y: 2 } }
+    - { template_name: "R2_N2L",  cell_type: "sky130_fd_sc_hd__nand2_2",       origin_sites: { x: 5,  y: 2 }, repeat: 5, spacing: 5 }
+    - { template_name: "R2_I2L",  cell_type: "sky130_fd_sc_hd__inv_2",         origin_sites: { x: 30, y: 2 } }
+    - { template_name: "R2_T1",   cell_type: "sky130_fd_sc_hd__tapvpwrvgnd_1", origin_sites: { x: 33, y: 2 } }
+    - { template_name: "R2_CB1R", cell_type: "sky130_fd_sc_hd__conb_1",        origin_sites: { x: 34, y: 2 } }
+    - { template_name: "R2_B2R",  cell_type: "sky130_fd_sc_hd__buf_2",         origin_sites: { x: 37, y: 2 } }
+    - { template_name: "R2_N2R",  cell_type: "sky130_fd_sc_hd__nand2_2",       origin_sites: { x: 41, y: 2 }, repeat: 5, spacing: 5 }
+    # =========================================================================
+    # ROW 3 (MX - Sequential) - dfbbp pair
+    # Left:  T(0) C3(1-3) inv2(4-6) dfbbp(7-32)                          = 33
+    # Right: T(33) conb(34-36) dfbbp(37-62) inv2(63-65)                   = 33
+    # =========================================================================
+    - { template_name: "R3_T0",   cell_type: "sky130_fd_sc_hd__tapvpwrvgnd_1", origin_sites: { x: 0,  y: 3 } }
+    - { template_name: "R3_C3",   cell_type: "sky130_fd_sc_hd__decap_3",       origin_sites: { x: 1,  y: 3 } }
+    - { template_name: "R3_I2L",  cell_type: "sky130_fd_sc_hd__inv_2",         origin_sites: { x: 4,  y: 3 } }
+    - { template_name: "R3_DFL",  cell_type: "sky130_fd_sc_hd__dfbbp_1",       origin_sites: { x: 7,  y: 3 } }
+    - { template_name: "R3_T1",   cell_type: "sky130_fd_sc_hd__tapvpwrvgnd_1", origin_sites: { x: 33, y: 3 } }
+    - { template_name: "R3_CB1R", cell_type: "sky130_fd_sc_hd__conb_1",        origin_sites: { x: 34, y: 3 } }
+    - { template_name: "R3_DFR",  cell_type: "sky130_fd_sc_hd__dfbbp_1",       origin_sites: { x: 37, y: 3 } }
+    - { template_name: "R3_I2R",  cell_type: "sky130_fd_sc_hd__inv_2",         origin_sites: { x: 63, y: 3 } }
+    # =========================================================================
+    # ROW 4 (N) - NAND2 left, BUF + NAND2 right
+    # Left:  T(0) C4(1-4) NAND2x5(5-29) inv2(30-32)                     = 33
+    # Right: T(33) conb(34-36) BUF2(37-40) NAND2x5(41-65)               = 33
+    # =========================================================================
+    - { template_name: "R4_T0",   cell_type: "sky130_fd_sc_hd__tapvpwrvgnd_1", origin_sites: { x: 0,  y: 4 } }
+    - { template_name: "R4_C4",   cell_type: "sky130_fd_sc_hd__decap_4",       origin_sites: { x: 1,  y: 4 } }
+    - { template_name: "R4_N2L",  cell_type: "sky130_fd_sc_hd__nand2_2",       origin_sites: { x: 5,  y: 4 }, repeat: 5, spacing: 5 }
+    - { template_name: "R4_I2L",  cell_type: "sky130_fd_sc_hd__inv_2",         origin_sites: { x: 30, y: 4 } }
+    - { template_name: "R4_T1",   cell_type: "sky130_fd_sc_hd__tapvpwrvgnd_1", origin_sites: { x: 33, y: 4 } }
+    - { template_name: "R4_CB1R", cell_type: "sky130_fd_sc_hd__conb_1",        origin_sites: { x: 34, y: 4 } }
+    - { template_name: "R4_B2R",  cell_type: "sky130_fd_sc_hd__buf_2",         origin_sites: { x: 37, y: 4 } }
+    - { template_name: "R4_N2R",  cell_type: "sky130_fd_sc_hd__nand2_2",       origin_sites: { x: 41, y: 4 }, repeat: 5, spacing: 5 }
+    # =========================================================================
+    # ROW 5 (MX) - NAND2 left, CLKBUF + AND + NAND2 right
+    # Left:  T(0) C4(1-4) NAND2x5(5-29) inv2(30-32)                     = 33
+    # Right: T(33) conb(34-36) CLKBUF(37-42) AND(43-47) NAND2x3(48-62) inv2(63-65) = 33
+    # =========================================================================
+    - { template_name: "R5_T0",   cell_type: "sky130_fd_sc_hd__tapvpwrvgnd_1", origin_sites: { x: 0,  y: 5 } }
+    - { template_name: "R5_C4",   cell_type: "sky130_fd_sc_hd__decap_4",       origin_sites: { x: 1,  y: 5 } }
+    - { template_name: "R5_N2L",  cell_type: "sky130_fd_sc_hd__nand2_2",       origin_sites: { x: 5,  y: 5 }, repeat: 5, spacing: 5 }
+    - { template_name: "R5_I2L",  cell_type: "sky130_fd_sc_hd__inv_2",         origin_sites: { x: 30, y: 5 } }
+    - { template_name: "R5_T1",   cell_type: "sky130_fd_sc_hd__tapvpwrvgnd_1", origin_sites: { x: 33, y: 5 } }
+    - { template_name: "R5_CB1R", cell_type: "sky130_fd_sc_hd__conb_1",        origin_sites: { x: 34, y: 5 } }
+    - { template_name: "R5_CB",   cell_type: "sky130_fd_sc_hd__clkbuf_4",      origin_sites: { x: 37, y: 5 } }
+    - { template_name: "R5_A1",   cell_type: "sky130_fd_sc_hd__and2_1",        origin_sites: { x: 43, y: 5 } }
+    - { template_name: "R5_N2R",  cell_type: "sky130_fd_sc_hd__nand2_2",       origin_sites: { x: 48, y: 5 }, repeat: 3, spacing: 5 }
+    - { template_name: "R5_I2R",  cell_type: "sky130_fd_sc_hd__inv_2",         origin_sites: { x: 63, y: 5 } }
+    # =========================================================================
+    # ROW 6 (N) - NAND2 left, BUF + NAND2 right
+    # Left:  T(0) C4(1-4) NAND2x5(5-29) inv2(30-32)                     = 33
+    # Right: T(33) conb(34-36) BUF2(37-40) NAND2x5(41-65)               = 33
+    # =========================================================================
+    - { template_name: "R6_T0",   cell_type: "sky130_fd_sc_hd__tapvpwrvgnd_1", origin_sites: { x: 0,  y: 6 } }
+    - { template_name: "R6_C4",   cell_type: "sky130_fd_sc_hd__decap_4",       origin_sites: { x: 1,  y: 6 } }
+    - { template_name: "R6_N2L",  cell_type: "sky130_fd_sc_hd__nand2_2",       origin_sites: { x: 5,  y: 6 }, repeat: 5, spacing: 5 }
+    - { template_name: "R6_I2L",  cell_type: "sky130_fd_sc_hd__inv_2",         origin_sites: { x: 30, y: 6 } }
+    - { template_name: "R6_T1",   cell_type: "sky130_fd_sc_hd__tapvpwrvgnd_1", origin_sites: { x: 33, y: 6 } }
+    - { template_name: "R6_CB1R", cell_type: "sky130_fd_sc_hd__conb_1",        origin_sites: { x: 34, y: 6 } }
+    - { template_name: "R6_B2R",  cell_type: "sky130_fd_sc_hd__buf_2",         origin_sites: { x: 37, y: 6 } }
+    - { template_name: "R6_N2R",  cell_type: "sky130_fd_sc_hd__nand2_2",       origin_sites: { x: 41, y: 6 }, repeat: 5, spacing: 5 }
+    # =========================================================================
+    # ROW 7 (MX - Sequential) - dfbbp pair
+    # Left:  T(0) C3(1-3) inv2(4-6) dfbbp(7-32)                          = 33
+    # Right: T(33) conb(34-36) dfbbp(37-62) inv2(63-65)                   = 33
+    # =========================================================================
+    - { template_name: "R7_T0",   cell_type: "sky130_fd_sc_hd__tapvpwrvgnd_1", origin_sites: { x: 0,  y: 7 } }
+    - { template_name: "R7_C3",   cell_type: "sky130_fd_sc_hd__decap_3",       origin_sites: { x: 1,  y: 7 } }
+    - { template_name: "R7_I2L",  cell_type: "sky130_fd_sc_hd__inv_2",         origin_sites: { x: 4,  y: 7 } }
+    - { template_name: "R7_DFL",  cell_type: "sky130_fd_sc_hd__dfbbp_1",       origin_sites: { x: 7,  y: 7 } }
+    - { template_name: "R7_T1",   cell_type: "sky130_fd_sc_hd__tapvpwrvgnd_1", origin_sites: { x: 33, y: 7 } }
+    - { template_name: "R7_CB1R", cell_type: "sky130_fd_sc_hd__conb_1",        origin_sites: { x: 34, y: 7 } }
+    - { template_name: "R7_DFR",  cell_type: "sky130_fd_sc_hd__dfbbp_1",       origin_sites: { x: 37, y: 7 } }
+    - { template_name: "R7_I2R",  cell_type: "sky130_fd_sc_hd__inv_2",         origin_sites: { x: 63, y: 7 } }
+    # =========================================================================
+    # ROW 8 (N) - NAND2 left, BUF + NAND2 right
+    # Left:  T(0) C4(1-4) NAND2x5(5-29) inv2(30-32)                     = 33
+    # Right: T(33) conb(34-36) BUF2(37-40) NAND2x5(41-65)               = 33
+    # =========================================================================
+    - { template_name: "R8_T0",   cell_type: "sky130_fd_sc_hd__tapvpwrvgnd_1", origin_sites: { x: 0,  y: 8 } }
+    - { template_name: "R8_C4",   cell_type: "sky130_fd_sc_hd__decap_4",       origin_sites: { x: 1,  y: 8 } }
+    - { template_name: "R8_N2L",  cell_type: "sky130_fd_sc_hd__nand2_2",       origin_sites: { x: 5,  y: 8 }, repeat: 5, spacing: 5 }
+    - { template_name: "R8_I2L",  cell_type: "sky130_fd_sc_hd__inv_2",         origin_sites: { x: 30, y: 8 } }
+    - { template_name: "R8_T1",   cell_type: "sky130_fd_sc_hd__tapvpwrvgnd_1", origin_sites: { x: 33, y: 8 } }
+    - { template_name: "R8_CB1R", cell_type: "sky130_fd_sc_hd__conb_1",        origin_sites: { x: 34, y: 8 } }
+    - { template_name: "R8_B2R",  cell_type: "sky130_fd_sc_hd__buf_2",         origin_sites: { x: 37, y: 8 } }
+    - { template_name: "R8_N2R",  cell_type: "sky130_fd_sc_hd__nand2_2",       origin_sites: { x: 41, y: 8 }, repeat: 5, spacing: 5 }
+    # =========================================================================
+    # ROW 9 (MX) - NAND2 left, BUF + NAND2 right
+    # Left:  T(0) C4(1-4) NAND2x5(5-29) inv2(30-32)                     = 33
+    # Right: T(33) conb(34-36) BUF2(37-40) NAND2x5(41-65)               = 33
+    # =========================================================================
+    - { template_name: "R9_T0",   cell_type: "sky130_fd_sc_hd__tapvpwrvgnd_1", origin_sites: { x: 0,  y: 9 } }
+    - { template_name: "R9_C4",   cell_type: "sky130_fd_sc_hd__decap_4",       origin_sites: { x: 1,  y: 9 } }
+    - { template_name: "R9_N2L",  cell_type: "sky130_fd_sc_hd__nand2_2",       origin_sites: { x: 5,  y: 9 }, repeat: 5, spacing: 5 }
+    - { template_name: "R9_I2L",  cell_type: "sky130_fd_sc_hd__inv_2",         origin_sites: { x: 30, y: 9 } }
+    - { template_name: "R9_T1",   cell_type: "sky130_fd_sc_hd__tapvpwrvgnd_1", origin_sites: { x: 33, y: 9 } }
+    - { template_name: "R9_CB1R", cell_type: "sky130_fd_sc_hd__conb_1",        origin_sites: { x: 34, y: 9 } }
+    - { template_name: "R9_B2R",  cell_type: "sky130_fd_sc_hd__buf_2",         origin_sites: { x: 37, y: 9 } }
+    - { template_name: "R9_N2R",  cell_type: "sky130_fd_sc_hd__nand2_2",       origin_sites: { x: 41, y: 9 }, repeat: 5, spacing: 5 }
+    # =========================================================================
+    # ROW 10 (N - Sequential) - dfbbp pair
+    # Left:  T(0) C3(1-3) inv2(4-6) dfbbp(7-32)                          = 33
+    # Right: T(33) conb(34-36) dfbbp(37-62) inv2(63-65)                   = 33
+    # =========================================================================
+    - { template_name: "R10_T0",   cell_type: "sky130_fd_sc_hd__tapvpwrvgnd_1", origin_sites: { x: 0,  y: 10 } }
+    - { template_name: "R10_C3",   cell_type: "sky130_fd_sc_hd__decap_3",       origin_sites: { x: 1,  y: 10 } }
+    - { template_name: "R10_I2L",  cell_type: "sky130_fd_sc_hd__inv_2",         origin_sites: { x: 4,  y: 10 } }
+    - { template_name: "R10_DFL",  cell_type: "sky130_fd_sc_hd__dfbbp_1",       origin_sites: { x: 7,  y: 10 } }
+    - { template_name: "R10_T1",   cell_type: "sky130_fd_sc_hd__tapvpwrvgnd_1", origin_sites: { x: 33, y: 10 } }
+    - { template_name: "R10_CB1R", cell_type: "sky130_fd_sc_hd__conb_1",        origin_sites: { x: 34, y: 10 } }
+    - { template_name: "R10_DFR",  cell_type: "sky130_fd_sc_hd__dfbbp_1",       origin_sites: { x: 37, y: 10 } }
+    - { template_name: "R10_I2R",  cell_type: "sky130_fd_sc_hd__inv_2",         origin_sites: { x: 63, y: 10 } }
