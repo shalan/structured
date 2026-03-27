@@ -218,7 +218,7 @@ def main():
     Wy = int(fab["tile_definition"]["dimensions_sites"]["height"])
     TX = int(fab["fabric_layout"]["tiles_x"])
     TY = int(fab["fabric_layout"]["tiles_y"])
-    dbu = int(fab["fabric_info"]["units"].get("database_units_per_micron", 1000))
+    dbu = int(fab["fabric_info"]["units"])
 
     tile_w_um = Wx * sx
     tile_h_um = Wy * sy
